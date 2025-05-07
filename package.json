@@ -1,0 +1,37 @@
+{
+  "name": "db-backup-boiler",
+  "version": "1.0.0",
+  "description": "Scalable database backup solution with cloud storage support",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "backup": "node src/cli.js backup",
+    "backup:all": "node src/cli.js backup-all",
+    "list:dbs": "node src/cli.js list-databases",
+    "lint": "eslint src/**/*.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "database",
+    "backup",
+    "s3",
+    "digital-ocean",
+    "spaces"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.804.0",
+    "commander": "^13.1.0",
+    "dotenv": "^16.5.0",
+    "mongodb": "^6.16.0",
+    "mysql2": "^3.14.1",
+    "node-cron": "^3.0.3",
+    "pg": "^8.15.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
