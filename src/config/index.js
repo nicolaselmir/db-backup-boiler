@@ -13,7 +13,7 @@ export const config = {
     backupIntervalDays: parseInt(process.env.BACKUP_INTERVAL_DAYS || '1', 10),
     logLevel: process.env.LOG_LEVEL || 'info',
   },
-  
+
   // Storage configuration
   storage: {
     provider: process.env.STORAGE_PROVIDER || 'spaces', // 'spaces' or 's3'

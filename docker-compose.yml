@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db-backup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: db-backup-service
+    restart: always
+    volumes:
+      - ./temp:/app/temp
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    environment:
+      - NODE_ENV=production
+      # You can add other environment variables here if needed
+      # Or use the .env file which is mounted into the container
+    networks:
+      - backup-network
+
+networks:
+  backup-network:
+    driver: bridge 
