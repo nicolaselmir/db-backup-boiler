@@ -10,7 +10,7 @@ export const config = {
   // App settings
   app: {
     env: process.env.NODE_ENV || 'development',
-    backupIntervalDays: parseInt(process.env.BACKUP_INTERVAL_DAYS || '3', 10),
+    backupIntervalDays: parseInt(process.env.BACKUP_INTERVAL_DAYS || '1', 10),
     logLevel: process.env.LOG_LEVEL || 'info',
   },
   

@@ -11,16 +11,30 @@ class StorageService {
   }
 
   initializeClient() {
-    const endpoint = this.config.endpoint;
+    let endpoint = this.config.endpoint;
     
     // Check if endpoint already contains https:// and remove it if needed
-    const cleanEndpoint = endpoint.replace(/^https?:\/\//, '');
+    endpoint = endpoint.replace(/^https?:\/\//, '');
     
-    logger.info(`Initializing storage client with endpoint: ${cleanEndpoint}`);
+    // Fix endpoint format for DigitalOcean Spaces
+    // Expected format: <region>.digitaloceanspaces.com
+    let region = 'fra1'; // Default region
+    
+    // Check if the endpoint follows the format <bucketname>.<region>.digitaloceanspaces.com
+    if (endpoint.includes('.digitaloceanspaces.com')) {
+      const parts = endpoint.split('.');
+      if (parts.length >= 3) {
+        region = parts[1];
+        endpoint = `${parts[1]}.digitaloceanspaces.com`;
+        logger.info(`Reformatted endpoint from ${this.config.endpoint} to ${endpoint}`);
+      }
+    }
+    
+    logger.info(`Initializing storage client with endpoint: ${endpoint}, region: ${region}`);
     
     return new S3Client({
-      endpoint: `https://${cleanEndpoint}`,
-      region: cleanEndpoint.split('.')[1] || 'us-east-1', // Extract region from endpoint (e.g. "fra1" from "guideit-storage.fra1.digitaloceanspaces.com")
+      endpoint: `https://${endpoint}`,
+      region: region,
       credentials: {
         accessKeyId: this.config.key,
         secretAccessKey: this.config.secret,
@@ -53,14 +67,21 @@ class StorageService {
       await this.client.send(new PutObjectCommand(params));
       
       const protocol = 'https';
-      const endpoint = this.config.endpoint.replace(/^https?:\/\//, '');
       const bucket = this.config.bucket;
       
       logger.info(`File uploaded successfully to bucket: ${bucket}`);
       
-      // Extract region from endpoint (e.g., "fra1" from "guideit-storage.fra1.digitaloceanspaces.com")
-      const parts = endpoint.split('.');
-      const region = parts[1] || 'us-east-1';
+      // Proper DigitalOcean Spaces URL format
+      let endpoint = this.config.endpoint.replace(/^https?:\/\//, '');
+      let region = 'fra1';
+      
+      // Extract region from endpoint
+      if (endpoint.includes('.digitaloceanspaces.com')) {
+        const parts = endpoint.split('.');
+        if (parts.length >= 3) {
+          region = parts[1];
+        }
+      }
       
       // For Digital Ocean Spaces, construct the proper URL
       // Format: https://<bucket>.<region>.digitaloceanspaces.com/<key>

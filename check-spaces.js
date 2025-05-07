@@ -9,14 +9,29 @@ async function listFilesInSpaces() {
   
   // Extract configuration from environment
   const provider = process.env.STORAGE_PROVIDER;
-  const endpoint = process.env.STORAGE_ENDPOINT.replace(/^https?:\/\//, '');
+  let endpoint = process.env.STORAGE_ENDPOINT.replace(/^https?:\/\//, '');
   const key = process.env.STORAGE_KEY;
   const secret = process.env.STORAGE_SECRET;
   const bucket = process.env.STORAGE_BUCKET;
   const path = process.env.STORAGE_PATH || 'database-backups';
   
+  // Fix endpoint format
+  // Expected format for spaces: <region>.digitaloceanspaces.com
+  let region = 'fra1'; // Default to fra1 if we can't determine it
+  
+  // Check if the endpoint follows the format <bucketname>.<region>.digitaloceanspaces.com
+  if (endpoint.includes('.digitaloceanspaces.com')) {
+    const parts = endpoint.split('.');
+    if (parts.length >= 3) {
+      region = parts[1];
+      endpoint = `${parts[1]}.digitaloceanspaces.com`;
+      console.log(`Reformatted endpoint from ${process.env.STORAGE_ENDPOINT} to ${endpoint}`);
+    }
+  }
+  
   console.log(`Provider: ${provider}`);
   console.log(`Endpoint: ${endpoint}`);
+  console.log(`Region: ${region}`);
   console.log(`Key: ${key ? '******' + key.slice(-4) : 'Not provided'}`);
   console.log(`Secret: ${secret ? '******' : 'Not provided'}`);
   console.log(`Bucket: ${bucket}`);
@@ -25,7 +40,7 @@ async function listFilesInSpaces() {
   // Create client
   const s3Config = {
     endpoint: `https://${endpoint}`,
-    region: endpoint.split('.')[1] || 'us-east-1',
+    region: region,
     credentials: {
       accessKeyId: key,
       secretAccessKey: secret,
