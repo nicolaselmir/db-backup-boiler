@@ -28,9 +28,9 @@ fi
 
 # Build and start the Docker container
 echo "Building and starting Docker container..."
-docker-compose up -d --build
+docker compose up -d --build
 
 echo "===== Deployment Complete ====="
 echo "The database backup service is now running in the background."
-echo "To view logs, run: docker-compose logs -f db-backup"
-echo "To stop the service, run: docker-compose down" 
+echo "To view logs, run: docker compose logs -f db-backup"
+echo "To stop the service, run: docker compose down" 
