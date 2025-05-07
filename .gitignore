@@ -1,4 +1,4 @@
-./ca-certificate.crt
+# ./ca-certificate.crt
 # Dependencies
 node_modules/
 npm-debug.log
